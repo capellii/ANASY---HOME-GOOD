@@ -24,7 +24,7 @@ Diferencial Principal: IA Analítica e Preditiva (não reativa)
 
 ### PILAR 2: INTELIGÊNCIA ARTIFICIAL (O "Cérebro")
    - Behavioral Learning: IA aprende padrões sem ser programada
-     Exemplo: Detecta que toda terça o usuário toma banho aquecido às 20h
+     Exemplo: Detecta que toda terça o usuário dorme as 20hrs
    - Gestão Energética Analítica: detecta anomalias (filtro sujo, consumo anormal)
    - Segurança Sentinela: análise de padrões de movimento vs comportamento esperado
    - Sugestões Proativas: sistema sugere otimizações automaticamente
@@ -63,8 +63,8 @@ Diferencial Principal: IA Analítica e Preditiva (não reativa)
 
    PLANO BÁSICO (Automação Manual):
    - Um App Universal
-   - Controle de até 50 dispositivos
-   - R$ 29,90/mês
+   - Controle de até 10 dispositivos
+   - R$ 99,90/mês
 
    PLANO PREMIUM (IA Analítica):
    - Tudo do básico +
@@ -72,7 +72,7 @@ Diferencial Principal: IA Analítica e Preditiva (não reativa)
    - Gestão Energética
    - Manutenção Preditiva
    - Suporte Técnico
-   - R$ 99,90/mês
+   - R$ 199,90/mês
 
    PLANO BUSINESS (Empresas/Condomínios):
    - Gestão ilimitada de dispositivos
@@ -89,12 +89,12 @@ Diferencial Principal: IA Analítica e Preditiva (não reativa)
    ╠════════════════════════╬════════════════════════╬════════════════════════╣
    ║ App por dispositivo    ║ Vários apps            ║ Um App Universal       ║
    ║ Marca específica       ║ (Google, Apple, etc)   ║ (Hub Único)            ║
-   ║ IA Reativa            ║ Assistente de voz      ║ IA Analítica e         ║
-   ║ (comandos)            ║ (comandos simples)     ║ Preditiva              ║
-   ║ Venda única de HW     ║ Sem modelo recorrente  ║ Assinatura "Casa       ║
-   ║                       ║                        ║ as a Service"          ║
-   ║ Sem manutenção        ║ Suporte técnico fraco  ║ Manutenção Preditiva + ║
-   ║                       ║                        ║ Suporte Premium        ║
+   ║ IA Reativa             ║ Assistente de voz      ║ IA Analítica e         ║
+   ║ (comandos)             ║ (comandos simples)     ║ Preditiva              ║
+   ║ Venda única de HW      ║ Sem modelo recorrente  ║ Assinatura "Casa       ║
+   ║                        ║                        ║ as a Service"          ║
+   ║ Sem manutenção         ║ Suporte técnico fraco  ║ Manutenção Preditiva + ║
+   ║                        ║                        ║ Suporte Premium        ║
    ╚════════════════════════╩════════════════════════╩════════════════════════╝
 
 
