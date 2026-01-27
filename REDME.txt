@@ -1,21 +1,101 @@
-ANASY (ANALYTIC SYSTEM) - TECH HOME
+================================================================================
+                    ANASY (ANALYTIC SYSTEM) - TECH HOME
+                           Documentação do Projeto
+================================================================================
 
-O QUE É A ANASY? 
+## 1. VISÃO DO PROJETO
 
-Aplicativo de Gerenciamento de Dispositivos Smart.
+O ANASY é uma plataforma universal de automação residencial que vai além de
+"ligar e desligar" dispositivos. É um sistema inteligente, analítico e preditivo
+que aprende os hábitos dos usuários e toma decisões de forma autônoma.
 
-
-PÚBLICO-ALVO:
-
-Casas de Alto e Médio padrão em construção ou em projeto. 
-Casas de Alto e Médio padrão já construídas.
-Empresas de Alto e Médio padrão.
+Diferencial Principal: IA Analítica e Preditiva (não reativa)
 
 
+## 2. TRÊS PILARES ESTRATÉGICOS
 
-SERVIÇO DE SUPORTE
+### PILAR 1: CONECTIVIDADE UNIVERSAL (O "Coração")
+   - Hub compatível com TODOS os protocolos: Zigbee, Z-Wave, Wi-Fi, Matter,
+     Bluetooth, Tuya, SmartLife, eWeLink, Apple, Google, Alexa
+   - Mini-servidor ANASY (Raspberry Pi / NUC) instalado na casa do cliente
+   - Middleware que traduz linguagens de diferentes dispositivos
+   - Interface 3D com planta baixa interativa da casa
+   - Virtualização: tocar no abajur virtual acende o real
 
-Através de uma valor mensal (uma mensalidade) a ANASY se responsabilizaria pela manutenção dos dispositivos Smart. Em caso de não pagamento ou não optação do serviço, o proprietário da casa torna-se inteiramente responsável pela manutenção.
+### PILAR 2: INTELIGÊNCIA ARTIFICIAL (O "Cérebro")
+   - Behavioral Learning: IA aprende padrões sem ser programada
+     Exemplo: Detecta que toda terça o usuário toma banho aquecido às 20h
+   - Gestão Energética Analítica: detecta anomalias (filtro sujo, consumo anormal)
+   - Segurança Sentinela: análise de padrões de movimento vs comportamento esperado
+   - Sugestões Proativas: sistema sugere otimizações automaticamente
+
+### PILAR 3: MODELO DE ASSINATURA (Casa as a Service)
+   - Manutenção Preditiva: detecta falhas antes de ocorrerem
+   - Serviço "Guardião Remoto": monitoramento de saúde da casa 24/7
+   - Suporte Técnico Incluso: concierge digital
+   - Atualização Mensal de Cenários: otimizações baseadas em estação/rotina
+
+
+## 3. PÚBLICO-ALVO
+
+   ✓ Casas de alto padrão em construção ou projeto
+   ✓ Casas de médio/alto padrão já construídas
+   ✓ Empresas (escritórios, comercial)
+   ✓ Condomínios e edifícios residenciais
+
+
+## 4. DIFERENCIAIS DE MERCADO (Nichos)
+
+   ANASY Health:
+   - Integração com smartwatches para monitoramento de saúde
+   - Reação automática em caso de queda/alteração cardíaca
+   - Acender luzes, desbloquear porta para ambulância
+   - Alerta para família
+
+   ANASY Segurança (Férias Realista):
+   - Simula presença de forma convincente
+   - Som de TV em horários de novela
+   - Luzes na cozinha na hora do jantar
+   - Padrões realistas que afastam ladrões
+
+
+## 5. MODELO DE RECEITA
+
+   PLANO BÁSICO (Automação Manual):
+   - Um App Universal
+   - Controle de até 50 dispositivos
+   - R$ 29,90/mês
+
+   PLANO PREMIUM (IA Analítica):
+   - Tudo do básico +
+   - Behavioral Learning
+   - Gestão Energética
+   - Manutenção Preditiva
+   - Suporte Técnico
+   - R$ 99,90/mês
+
+   PLANO BUSINESS (Empresas/Condomínios):
+   - Gestão ilimitada de dispositivos
+   - Relatórios analíticos
+   - Suporte dedicado
+   - Customização de cenários
+   - Preço sob demanda
+
+
+## 6. PROPOSTA DE VALOR RESUMIDA
+
+   ╔════════════════════════╦════════════════════════╦════════════════════════╗
+   ║    CONCORRENTE TÍPICO  ║   APLICATIVO PADRÃO    ║       ANASY            ║
+   ╠════════════════════════╬════════════════════════╬════════════════════════╣
+   ║ App por dispositivo    ║ Vários apps            ║ Um App Universal       ║
+   ║ Marca específica       ║ (Google, Apple, etc)   ║ (Hub Único)            ║
+   ║ IA Reativa            ║ Assistente de voz      ║ IA Analítica e         ║
+   ║ (comandos)            ║ (comandos simples)     ║ Preditiva              ║
+   ║ Venda única de HW     ║ Sem modelo recorrente  ║ Assinatura "Casa       ║
+   ║                       ║                        ║ as a Service"          ║
+   ║ Sem manutenção        ║ Suporte técnico fraco  ║ Manutenção Preditiva + ║
+   ║                       ║                        ║ Suporte Premium        ║
+   ╚════════════════════════╩════════════════════════╩════════════════════════╝
 
 
 
