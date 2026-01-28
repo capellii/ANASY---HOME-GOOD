@@ -9,7 +9,8 @@
     "build": "tsc",
     "lint": "eslint src --ext .ts",
     "format": "prettier --write src",
-    "test": "jest"
+    "test": "jest",
+    "initdb": "ts-node scripts/initDb.ts"
   },
   "author": "Equipe ANASY",
   "license": "MIT",
