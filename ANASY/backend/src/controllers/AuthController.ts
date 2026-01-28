@@ -9,6 +9,16 @@ export class AuthController {
     this.register = this.register.bind(this);
   }
 
+  public async refreshToken(req, res) {
+    try {
+      const { refreshToken } = req.body;
+      const result = await this.authService.refreshToken(refreshToken);
+      res.json(result);
+    } catch (err) {
+      res.status(401).json({ error: err.message });
+    }
+  }
+
   public async login(req, res) {
     try {
       const { email, password } = req.body;
