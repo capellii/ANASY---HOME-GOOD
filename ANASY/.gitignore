@@ -1,0 +1,29 @@
+# Node
+node_modules/
+dist/
+build/
+.env
+.env.*
+
+# Python
+__pycache__/
+*.pyc
+venv/
+.env
+
+# React Native
+.expo/
+*.log
+
+# VSCode
+.vscode/
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS
+.DS_Store
+Thumbs.db
