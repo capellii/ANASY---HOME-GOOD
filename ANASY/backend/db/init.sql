@@ -4,18 +4,53 @@ CREATE TABLE IF NOT EXISTS users (
   id SERIAL PRIMARY KEY,
   name VARCHAR(100) NOT NULL,
   email VARCHAR(100) UNIQUE NOT NULL,
-  password VARCHAR(255) NOT NULL
+  password VARCHAR(255) NOT NULL,
+  subscription_plan VARCHAR(20) NOT NULL DEFAULT 'basic',
+  role VARCHAR(20) NOT NULL DEFAULT 'owner'
 );
 
 CREATE TABLE IF NOT EXISTS devices (
   id SERIAL PRIMARY KEY,
   name VARCHAR(100) NOT NULL,
   type VARCHAR(50) NOT NULL,
-  status VARCHAR(20) NOT NULL
+  protocol VARCHAR(20) NOT NULL,
+  status JSONB NOT NULL DEFAULT '{}'::jsonb,
+  energy_consumption NUMERIC,
+  last_seen TIMESTAMP,
+  battery_level NUMERIC
 );
 
 CREATE TABLE IF NOT EXISTS scenarios (
   id SERIAL PRIMARY KEY,
   name VARCHAR(100) NOT NULL,
-  description TEXT
+  description TEXT,
+  trigger JSONB NOT NULL,
+  conditions JSONB,
+  actions JSONB NOT NULL,
+  enabled BOOLEAN NOT NULL DEFAULT TRUE
+);
+
+CREATE TABLE IF NOT EXISTS energy_consumption (
+  id SERIAL PRIMARY KEY,
+  device_id INTEGER NOT NULL REFERENCES devices(id) ON DELETE CASCADE,
+  timestamp TIMESTAMP NOT NULL DEFAULT NOW(),
+  power_watts NUMERIC NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS health_metrics (
+  id SERIAL PRIMARY KEY,
+  user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  metric_type VARCHAR(50) NOT NULL,
+  value NUMERIC NOT NULL,
+  timestamp TIMESTAMP NOT NULL DEFAULT NOW(),
+  device_id INTEGER REFERENCES devices(id) ON DELETE SET NULL
+);
+
+CREATE TABLE IF NOT EXISTS events (
+  id SERIAL PRIMARY KEY,
+  user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  event_type VARCHAR(50) NOT NULL,
+  device_id INTEGER REFERENCES devices(id) ON DELETE SET NULL,
+  data JSONB,
+  created_at TIMESTAMP NOT NULL DEFAULT NOW()
 );

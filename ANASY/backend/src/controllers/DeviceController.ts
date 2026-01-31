@@ -1,3 +1,4 @@
+import { Request, Response } from 'express';
 import { DeviceService } from '../services/DeviceService';
 
 export class DeviceController {
@@ -9,20 +10,20 @@ export class DeviceController {
     this.createDevice = this.createDevice.bind(this);
   }
 
-  public async getDevices(req, res) {
+  public async getDevices(req: Request, res: Response) {
     try {
       const devices = await this.deviceService.getDevices();
       res.json(devices);
-    } catch (err) {
+    } catch (err: any) {
       res.status(500).json({ error: err.message });
     }
   }
 
-  public async createDevice(req, res) {
+  public async createDevice(req: Request, res: Response) {
     try {
       const device = await this.deviceService.createDevice(req.body);
       res.status(201).json(device);
-    } catch (err) {
+    } catch (err: any) {
       res.status(400).json({ error: err.message });
     }
   }

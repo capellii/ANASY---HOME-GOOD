@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, Button, StyleSheet, Alert } from 'react-native';
-import axios from 'axios';
+import api from '../services/api';
 
 export default function LoginScreen({ navigation }) {
   const [email, setEmail] = useState('');
@@ -8,12 +8,11 @@ export default function LoginScreen({ navigation }) {
 
   const handleLogin = async () => {
     try {
-      // Substitua a URL abaixo pela URL real da sua API backend
-      const response = await axios.post('http://localhost:3000/api/auth/login', {
+      const response = await api.post('/auth/login', {
         email,
         password,
       });
-      if (response.data && response.data.token) {
+      if (response.data && response.data.accessToken) {
         // Salvar token, navegar para dashboard, etc.
         navigation.replace('Dashboard');
       } else {

@@ -4,4 +4,5 @@ export interface User {
   password: string;
   name: string;
   subscriptionPlan: 'basic' | 'premium' | 'health';
+  role: 'admin' | 'owner' | 'member' | 'guest';
 }

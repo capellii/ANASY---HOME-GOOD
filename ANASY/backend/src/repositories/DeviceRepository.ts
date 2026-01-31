@@ -10,8 +10,16 @@ export class DeviceRepository {
 
   public async create(deviceData: Omit<Device, 'id'>): Promise<Device> {
     const result = await pool.query(
-      'INSERT INTO devices (name, type, status) VALUES ($1, $2, $3) RETURNING *',
-      [deviceData.name, deviceData.type, deviceData.status]
+      'INSERT INTO devices (name, type, protocol, status, energy_consumption, last_seen, battery_level) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *',
+      [
+        deviceData.name,
+        deviceData.type,
+        deviceData.protocol,
+        deviceData.status,
+        deviceData.energyConsumption ?? null,
+        deviceData.lastSeen ?? null,
+        deviceData.batteryLevel ?? null
+      ]
     );
     return result.rows[0];
   }
