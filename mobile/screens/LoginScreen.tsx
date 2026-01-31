@@ -1,31 +1,34 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, Alert } from 'react-native';
-import api from '../services/api';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, ActivityIndicator } from 'react-native';
+import { useAuth } from '../context/AuthContext';
 
-export default function LoginScreen({ navigation }) {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+export default function LoginScreen() {
+  const { signIn } = useAuth();
+  const [email, setEmail] = useState('joao@teste.com');
+  const [password, setPassword] = useState('123456');
+  const [loading, setLoading] = useState(false);
 
   const handleLogin = async () => {
+    if (!email || !password) {
+      Alert.alert('Erro', 'Preencha todos os campos.');
+      return;
+    }
+
+    setLoading(true);
     try {
-      const response = await api.post('/auth/login', {
-        email,
-        password,
-      });
-      if (response.data && response.data.accessToken) {
-        // Salvar token, navegar para dashboard, etc.
-        navigation.replace('Dashboard');
-      } else {
-        Alert.alert('Erro', 'Credenciais inválidas.');
-      }
-    } catch (error) {
-      Alert.alert('Erro', 'Falha ao conectar ao servidor.');
+      await signIn(email, password);
+    } catch (error: any) {
+      Alert.alert('Erro', error.response?.data?.message || 'Falha ao conectar.');
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Login</Text>
+      <Text style={styles.title}>ANASY</Text>
+      <Text style={styles.subtitle}>Sistema de Casa Inteligente</Text>
+
       <TextInput
         style={styles.input}
         placeholder="Email"
@@ -33,6 +36,7 @@ export default function LoginScreen({ navigation }) {
         onChangeText={setEmail}
         autoCapitalize="none"
         keyboardType="email-address"
+        editable={!loading}
       />
       <TextInput
         style={styles.input}
@@ -40,8 +44,22 @@ export default function LoginScreen({ navigation }) {
         value={password}
         onChangeText={setPassword}
         secureTextEntry
+        editable={!loading}
       />
-      <Button title="Entrar" onPress={handleLogin} />
+
+      <TouchableOpacity
+        style={[styles.button, loading && styles.buttonDisabled]}
+        onPress={handleLogin}
+        disabled={loading}
+      >
+        {loading ? (
+          <ActivityIndicator color="#fff" />
+        ) : (
+          <Text style={styles.buttonText}>Entrar</Text>
+        )}
+      </TouchableOpacity>
+
+      <Text style={styles.testText}>Demo: joao@teste.com / 123456</Text>
     </View>
   );
 }
@@ -51,19 +69,49 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     padding: 24,
-    backgroundColor: '#fff',
+    backgroundColor: '#f5f5f5',
   },
   title: {
-    fontSize: 28,
+    fontSize: 36,
     fontWeight: 'bold',
-    marginBottom: 24,
+    marginBottom: 8,
     textAlign: 'center',
+    color: '#1e40af',
+  },
+  subtitle: {
+    fontSize: 14,
+    color: '#666',
+    textAlign: 'center',
+    marginBottom: 32,
   },
   input: {
     borderWidth: 1,
-    borderColor: '#ccc',
+    borderColor: '#ddd',
     borderRadius: 8,
     padding: 12,
     marginBottom: 16,
+    backgroundColor: '#fff',
+    fontSize: 16,
+  },
+  button: {
+    backgroundColor: '#1e40af',
+    borderRadius: 8,
+    padding: 14,
+    alignItems: 'center',
+    marginTop: 8,
+  },
+  buttonDisabled: {
+    opacity: 0.6,
+  },
+  buttonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  testText: {
+    fontSize: 12,
+    color: '#999',
+    textAlign: 'center',
+    marginTop: 16,
   },
 });
