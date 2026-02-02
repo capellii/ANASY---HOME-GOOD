@@ -135,14 +135,11 @@ export default function DashboardScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.header}>
-        <View>
-          <Text style={styles.title}>Dashboard</Text>
-          <Text style={styles.welcome}>Bem-vindo, {user?.name || 'Usuário'}!</Text>
-        </View>
+    <View style={styles.container}>
+      <View style={styles.topBar}>
+        <Text style={styles.welcome}>Welcome, {user?.name || 'User'}!</Text>
         <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
-          <Text style={styles.logoutText}>Sair</Text>
+          <Text style={styles.logoutText}>Logout</Text>
         </TouchableOpacity>
       </View>
 
@@ -258,7 +255,7 @@ export default function DashboardScreen() {
           </View>
         </SafeAreaView>
       </Modal>
-    </SafeAreaView>
+    </View>
   );
 }
 
@@ -267,25 +264,19 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#f5f5f5',
   },
-  header: {
+  topBar: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: 16,
-    paddingVertical: 16,
+    paddingVertical: 12,
     backgroundColor: '#fff',
     borderBottomWidth: 1,
     borderBottomColor: '#eee',
   },
-  title: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    color: '#1e40af',
-  },
   welcome: {
     fontSize: 14,
     color: '#666',
-    marginTop: 4,
   },
   logoutButton: {
     backgroundColor: '#ef4444',
