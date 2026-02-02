@@ -1,6 +1,7 @@
 # 📚 ANASY - Índice de Documentação Completo
 
-Última atualização: 31 de Janeiro de 2026
+Última atualização: 01 de Fevereiro de 2026  
+**Status Atual:** Backend 100% Pronto | Mobile 85% (refresh token + device control funcionando)
 
 ## 🗂️ Documentação por Fase
 
@@ -52,6 +53,7 @@
 
 | Documento | Descrição | Local |
 |-----------|-----------|-------|
+| [TESTING_GUIDE.md](TESTING_GUIDE.md) | Guia completo de testes (backend + mobile) | Raiz |
 | [ANASY/backend/test-api.ps1](ANASY/backend/test-api.ps1) | Testes em PowerShell | Backend |
 | [ANASY/backend/test-api.sh](ANASY/backend/test-api.sh) | Testes em Bash | Backend |
 
