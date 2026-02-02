@@ -118,9 +118,10 @@
     ✅ ANASY/docs/API_REFERENCE.md       - Documentação
 
   Mobile:
-    ⏳ mobile/App.tsx                     - Stack navigator
-    ⏳ mobile/screens/LoginScreen.tsx     - Login (pronto)
-    ⏳ mobile/screens/DashboardScreen.tsx - Dashboard (básico)
+    ✅ mobile/App.tsx                     - Stack navigator
+    ✅ mobile/context/AuthContext.tsx     - Auth + AsyncStorage
+    ✅ mobile/screens/LoginScreen.tsx     - Login (pronto)
+    ✅ mobile/screens/DashboardScreen.tsx - Dashboard com devices
 
   Config:
     ✅ ANASY/backend/.env                - Variáveis de ambiente
@@ -145,19 +146,19 @@
   1. Instalar dependências mobile
      cd mobile && npm install
 
-  2. Implementar AuthContext
-     • Armazenar tokens em AsyncStorage
-     • Persistência de sessão
-     • Auto-refresh
+    2. Implementar refresh token
+      • Auto-refresh via POST /api/auth/refresh
+      • Retry automático em 401
 
   3. Integrar API
      • Usar client axios do mobile/services/api.ts
      • Headers com Authorization Bearer token
 
-  4. Testar fluxo completo
-     • Login no app → recebe tokens
-     • Dashboard carrega dados
-     • Logout → sessão limpa
+    4. Testar fluxo completo
+      • Login no app → recebe tokens
+      • Dashboard carrega dados
+      • Refresh token funciona
+      • Logout → sessão limpa
 
 
 ✨ MELHORIAS SUGERIDAS

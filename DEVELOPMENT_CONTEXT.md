@@ -20,7 +20,7 @@
 - [x] Documentação completa
 
 #### Database
-- [x] 7 tabelas criadas (users, devices, scenarios, energy_consumption, health_metrics, events, security_events)
+- [x] 6 tabelas criadas (users, devices, scenarios, energy_consumption, health_metrics, events)
 - [x] Relacionamentos e constraints
 - [x] Schema em init.sql
 
@@ -36,30 +36,22 @@
 ### 🚧 Em Desenvolvimento
 
 #### Mobile
-- [ ] AuthContext implementado
-- [ ] AsyncStorage para persistência de tokens
-- [ ] Fluxo login → dashboard funcional
-- [ ] Dashboard com listagem de dispositivos
+- [x] AuthContext implementado
+- [x] AsyncStorage para persistência de tokens
+- [x] Fluxo login → dashboard funcional
+- [x] Dashboard com listagem de dispositivos
 - [ ] Controle de dispositivos
 
 ---
 
 ## 🎯 PRÓXIMOS PASSOS (PRIORIDADE)
 
-### 1️⃣ MOBILE - AuthContext (CRÍTICO)
-**Arquivo**: `MOBILE_SETUP.md` (guia completo pronto)
+### 1️⃣ MOBILE - Refresh Token (CRÍTICO)
+**Arquivo**: `mobile/context/AuthContext.tsx`
 
-```bash
-cd mobile
-npm install
-npm install @react-native-async-storage/async-storage
-```
-
-Criar: `mobile/context/AuthContext.tsx` com:
-- ✅ Login/Register/Logout
-- ✅ AsyncStorage para tokens
-- ✅ Auto-refresh de tokens
-- ✅ Navegação condicional
+Implementar:
+- [ ] Auto-refresh de tokens usando `POST /api/auth/refresh`
+- [ ] Retry automático em 401
 
 ### 2️⃣ MOBILE - Dashboard Real
 - Listar dispositivos via API
@@ -128,9 +120,9 @@ mobile/
 ├── App.tsx                    ← Stack navigator (pronto)
 ├── screens/
 │   ├── LoginScreen.tsx        ← Login (pronto)
-│   └── DashboardScreen.tsx    ← Dashboard (básico)
+│   └── DashboardScreen.tsx    ← Dashboard com lista de devices
 ├── context/
-│   └── AuthContext.tsx        ← ⚠️ FALTA CRIAR (prioridade)
+│   └── AuthContext.tsx        ← Auth + AsyncStorage (pronto)
 ├── services/
 │   └── api.ts                 ← Client Axios (pronto)
 └── package.json
@@ -197,15 +189,16 @@ npm start
 ANASY---HOME-GOOD/
 ├── ANASY/
 │   ├── backend/                 ✅ PRONTO
-│   │   ├── src/                 (13 arquivos modificados)
-│   │   ├── db/init.sql          (7 tabelas)
+│   │   ├── src/                 (controllers/services/repos)
+│   │   ├── db/init.sql          (schema)
 │   │   ├── docker-compose.yml   (rodando)
 │   │   └── .env                 (configurado)
-│   ├── docs/
-│   │   └── API_REFERENCE.md     (completo)
-│   └── mobile/                  🚧 EM DESENVOLVIMENTO
-│       ├── screens/
-│       └── context/             (falta criar)
+│   └── docs/
+│       └── API_REFERENCE.md     (completo)
+│
+├── mobile/                      🚧 EM DESENVOLVIMENTO
+│   ├── screens/
+│   └── context/                 (AuthContext pronto)
 │
 ├── Documentação/
 │   ├── DOCS_INDEX.md            ← LEIA PRIMEIRO
@@ -230,13 +223,10 @@ ANASY---HOME-GOOD/
 - [ ] Verificar se banco está ok: `docker compose logs db | tail 20`
 
 ### 2. Continuar Mobile
-- [ ] Ler MOBILE_SETUP.md completamente
-- [ ] Criar mobile/context/AuthContext.tsx
-- [ ] Instalar @react-native-async-storage/async-storage
-- [ ] Atualizar App.tsx com AuthProvider
-- [ ] Atualizar LoginScreen.tsx
-- [ ] Atualizar DashboardScreen.tsx
-- [ ] Testar fluxo login → dashboard
+- [ ] Implementar refresh token no AuthContext
+- [ ] Garantir retry automático em 401
+- [ ] Adicionar controle de dispositivos (toggle on/off)
+- [ ] Testar fluxo login → dashboard → refresh
 
 ### 3. Validar
 - [ ] Login funciona
@@ -379,7 +369,7 @@ Token encontrado? → SIM → Vai para Dashboard
 ## ✅ STATUS FINAL DESTA SESSÃO
 
 **Backend**: ✅ 100% Completo - Pronto para Produção
-**Mobile**: 🚧 50% Completo - Falta Autenticação
+**Mobile**: 🚧 70% Completo - Falta refresh + controle de dispositivos
 **Documentação**: ✅ 100% Completa
 **DevOps**: ✅ 100% Pronto
 
@@ -390,13 +380,12 @@ Token encontrado? → SIM → Vai para Dashboard
 
 ## 🎯 OBJETIVO PRÓXIMA SESSÃO
 
-**Ter fluxo de login → dashboard 100% funcional no app mobile**
+**Ter refresh token + controle de dispositivos no app mobile**
 
 Passos:
-1. Criar AuthContext.tsx (30 min)
-2. Atualizar App.tsx + LoginScreen + DashboardScreen (30 min)
-3. Instalar AsyncStorage (5 min)
-4. Testar completo (30 min)
+1. Implementar refresh token no AuthContext (30 min)
+2. Adicionar ações no Dashboard para controlar devices (30-60 min)
+3. Testar fluxo completo (30 min)
 
 ---
 

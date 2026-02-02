@@ -35,11 +35,11 @@ const api = axios.create({
 baseURL: 'http://192.168.X.X:3000/api'
 ```
 
-## 🔐 Implementar Autenticação
+## 🔐 Atualizar Autenticação (Refresh Token)
 
-### 1. Criar AuthContext
+### 1. AuthContext já existe
 
-Arquivo: `mobile/context/AuthContext.tsx`
+Arquivo: `mobile/context/AuthContext.tsx` (já implementado com AsyncStorage + header Authorization)
 
 ```typescript
 import React, { createContext, useState, useEffect, ReactNode } from 'react';
@@ -149,13 +149,13 @@ export const useAuth = () => {
 };
 ```
 
-### 2. Instalar AsyncStorage
+### 2. AsyncStorage (já instalado)
 
 ```bash
 npm install @react-native-async-storage/async-storage
 ```
 
-### 3. Usar AuthContext em App.tsx
+### 3. App.tsx já usa AuthProvider
 
 ```typescript
 import React from 'react';
@@ -202,7 +202,7 @@ export default function App() {
 }
 ```
 
-### 4. Atualizar LoginScreen
+### 4. LoginScreen já integrado
 
 ```typescript
 import React, { useState } from 'react';
@@ -268,7 +268,7 @@ const styles = StyleSheet.create({
 });
 ```
 
-### 5. Atualizar DashboardScreen com Logout
+### 5. DashboardScreen já integrado
 
 ```typescript
 import React, { useState, useEffect } from 'react';
@@ -359,12 +359,12 @@ const styles = StyleSheet.create({
 
 ## 📋 Checklist de Integração
 
-- [ ] `npm install` no mobile/
-- [ ] Criar AuthContext.tsx
-- [ ] Instalar @react-native-async-storage/async-storage
-- [ ] Atualizar App.tsx com AuthProvider
-- [ ] Atualizar LoginScreen.tsx
-- [ ] Atualizar DashboardScreen.tsx
+- [x] `npm install` no mobile/
+- [x] AuthContext.tsx implementado
+- [x] @react-native-async-storage/async-storage instalado
+- [x] App.tsx com AuthProvider
+- [x] LoginScreen integrado
+- [x] DashboardScreen integrado
 - [ ] Testar login local (backend rodando)
 - [ ] Testar no emulador/celular
 - [ ] Implementar refresh de token

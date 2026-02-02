@@ -8,22 +8,48 @@ import {
   ActivityIndicator,
   Alert,
   SafeAreaView,
+  Modal,
+  TextInput,
+  ScrollView,
 } from 'react-native';
 import { useAuth } from '../context/AuthContext';
 import api from '../services/api';
 
 interface Device {
-  id: string;
+  id: number;
   name: string;
   type: string;
-  status: string;
+  status: any;
 }
+
+const getPowerValue = (status: any) => {
+  if (!status) return 'off';
+  if (typeof status === 'string') return status;
+  if (typeof status?.power === 'boolean') return status.power ? 'on' : 'off';
+  if (typeof status?.power === 'string') return status.power;
+  return 'off';
+};
+
+const buildNextStatus = (status: any) => {
+  const current = getPowerValue(status);
+  const next = current === 'on' ? 'off' : 'on';
+  const base = typeof status === 'object' && status !== null ? status : {};
+  return { ...base, power: next };
+};
 
 export default function DashboardScreen() {
   const { state, signOut } = useAuth();
   const { user } = state;
   const [devices, setDevices] = useState<Device[]>([]);
   const [loading, setLoading] = useState(true);
+  const [showCreateModal, setShowCreateModal] = useState(false);
+  const [createLoading, setCreateLoading] = useState(false);
+  const [newDevice, setNewDevice] = useState({
+    name: '',
+    type: 'light' as const,
+    protocol: 'wifi' as const,
+    status: { power: 'off' },
+  });
 
   useEffect(() => {
     loadDevices();
@@ -50,13 +76,63 @@ export default function DashboardScreen() {
     }
   };
 
-  const renderDevice = ({ item }: { item: Device }) => (
+  const handleToggleDevice = async (device: Device) => {
+    try {
+      const nextStatus = buildNextStatus(device.status);
+      const response = await api.patch(`/devices/${device.id}/status`, { status: nextStatus });
+      const updated = response.data;
+      setDevices((prev) => prev.map((item) => (item.id === device.id ? updated : item)));
+    } catch (error) {
+      Alert.alert('Erro', 'Falha ao atualizar dispositivo.');
+    }
+  };
+
+  const handleCreateDevice = async () => {
+    if (!newDevice.name.trim()) {
+      Alert.alert('Erro', 'Nome do dispositivo é obrigatório.');
+      return;
+    }
+
+    setCreateLoading(true);
+    try {
+      const response = await api.post('/devices', {
+        name: newDevice.name,
+        type: newDevice.type,
+        protocol: newDevice.protocol,
+        status: newDevice.status,
+      });
+      setDevices((prev) => [...prev, response.data]);
+      setShowCreateModal(false);
+      setNewDevice({
+        name: '',
+        type: 'light',
+        protocol: 'wifi',
+        status: { power: 'off' },
+      });
+      Alert.alert('Sucesso', 'Dispositivo criado com sucesso!');
+    } catch (error) {
+      Alert.alert('Erro', 'Falha ao criar dispositivo.');
+    } finally {
+      setCreateLoading(false);
+    }
+  };
+
+  const renderDevice = ({ item }: { item: Device }) => {
+    const power = getPowerValue(item.status);
+    return (
     <View style={styles.deviceCard}>
       <Text style={styles.deviceName}>{item.name}</Text>
       <Text style={styles.deviceType}>{item.type}</Text>
-      <Text style={styles.deviceStatus}>Status: {item.status}</Text>
+      <Text style={styles.deviceStatus}>Status: {power}</Text>
+      <TouchableOpacity
+        style={[styles.toggleButton, power === 'on' ? styles.toggleOn : styles.toggleOff]}
+        onPress={() => handleToggleDevice(item)}
+      >
+        <Text style={styles.toggleText}>{power === 'on' ? 'Desligar' : 'Ligar'}</Text>
+      </TouchableOpacity>
     </View>
-  );
+    );
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -80,15 +156,108 @@ export default function DashboardScreen() {
           <FlatList
             data={devices}
             renderItem={renderDevice}
-            keyExtractor={(item) => item.id}
+            keyExtractor={(item) => String(item.id)}
             scrollEnabled={false}
           />
         )}
       </View>
 
+      <TouchableOpacity style={styles.createButton} onPress={() => setShowCreateModal(true)}>
+        <Text style={styles.createButtonText}>+ Novo Dispositivo</Text>
+      </TouchableOpacity>
+
       <TouchableOpacity style={styles.refreshButton} onPress={loadDevices}>
         <Text style={styles.refreshText}>Atualizar</Text>
       </TouchableOpacity>
+
+      <Modal
+        visible={showCreateModal}
+        animationType="slide"
+        onRequestClose={() => setShowCreateModal(false)}
+      >
+        <SafeAreaView style={styles.modalContainer}>
+          <View style={styles.modalHeader}>
+            <TouchableOpacity onPress={() => setShowCreateModal(false)}>
+              <Text style={styles.modalCloseText}>Cancelar</Text>
+            </TouchableOpacity>
+            <Text style={styles.modalTitle}>Novo Dispositivo</Text>
+            <View style={{ width: 50 }} />
+          </View>
+
+          <ScrollView style={styles.modalContent}>
+            <Text style={styles.modalLabel}>Nome do Dispositivo</Text>
+            <TextInput
+              style={styles.modalInput}
+              placeholder="Ex: Luz Sala"
+              value={newDevice.name}
+              onChangeText={(text) => setNewDevice((prev) => ({ ...prev, name: text }))}
+              editable={!createLoading}
+            />
+
+            <Text style={styles.modalLabel}>Tipo</Text>
+            <View style={styles.typeContainer}>
+              {(['light', 'plug', 'ac', 'lock'] as const).map((type) => (
+                <TouchableOpacity
+                  key={type}
+                  style={[
+                    styles.typeButton,
+                    newDevice.type === type && styles.typeButtonActive,
+                  ]}
+                  onPress={() => setNewDevice((prev) => ({ ...prev, type }))}
+                  disabled={createLoading}
+                >
+                  <Text
+                    style={[
+                      styles.typeButtonText,
+                      newDevice.type === type && styles.typeButtonTextActive,
+                    ]}
+                  >
+                    {type}
+                  </Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+
+            <Text style={styles.modalLabel}>Protocolo</Text>
+            <View style={styles.protocolContainer}>
+              {(['wifi', 'zigbee', 'zwave'] as const).map((protocol) => (
+                <TouchableOpacity
+                  key={protocol}
+                  style={[
+                    styles.protocolButton,
+                    newDevice.protocol === protocol && styles.protocolButtonActive,
+                  ]}
+                  onPress={() => setNewDevice((prev) => ({ ...prev, protocol }))}
+                  disabled={createLoading}
+                >
+                  <Text
+                    style={[
+                      styles.protocolButtonText,
+                      newDevice.protocol === protocol && styles.protocolButtonTextActive,
+                    ]}
+                  >
+                    {protocol}
+                  </Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+          </ScrollView>
+
+          <View style={styles.modalFooter}>
+            <TouchableOpacity
+              style={[styles.modalCreateButton, createLoading && styles.modalCreateButtonDisabled]}
+              onPress={handleCreateDevice}
+              disabled={createLoading}
+            >
+              {createLoading ? (
+                <ActivityIndicator color="#fff" />
+              ) : (
+                <Text style={styles.modalCreateButtonText}>Criar Dispositivo</Text>
+              )}
+            </TouchableOpacity>
+          </View>
+        </SafeAreaView>
+      </Modal>
     </SafeAreaView>
   );
 }
@@ -160,6 +329,22 @@ const styles = StyleSheet.create({
     color: '#1e40af',
     marginTop: 8,
   },
+  toggleButton: {
+    marginTop: 12,
+    paddingVertical: 8,
+    borderRadius: 6,
+    alignItems: 'center',
+  },
+  toggleOn: {
+    backgroundColor: '#ef4444',
+  },
+  toggleOff: {
+    backgroundColor: '#22c55e',
+  },
+  toggleText: {
+    color: '#fff',
+    fontWeight: 'bold',
+  },
   emptyText: {
     textAlign: 'center',
     color: '#999',
@@ -179,5 +364,134 @@ const styles = StyleSheet.create({
   refreshText: {
     color: '#fff',
     fontWeight: 'bold',
+  },
+  createButton: {
+    backgroundColor: '#3b82f6',
+    marginHorizontal: 16,
+    marginBottom: 12,
+    paddingVertical: 12,
+    borderRadius: 8,
+    alignItems: 'center',
+  },
+  createButtonText: {
+    color: '#fff',
+    fontWeight: 'bold',
+  },
+  modalContainer: {
+    flex: 1,
+    backgroundColor: '#f5f5f5',
+  },
+  modalHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    backgroundColor: '#fff',
+    borderBottomWidth: 1,
+    borderBottomColor: '#eee',
+  },
+  modalCloseText: {
+    color: '#1e40af',
+    fontWeight: 'bold',
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#333',
+  },
+  modalContent: {
+    flex: 1,
+    padding: 16,
+  },
+  modalLabel: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    color: '#333',
+    marginBottom: 8,
+    marginTop: 16,
+  },
+  modalInput: {
+    borderWidth: 1,
+    borderColor: '#ddd',
+    borderRadius: 8,
+    padding: 12,
+    backgroundColor: '#fff',
+    fontSize: 14,
+  },
+  typeContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+  },
+  typeButton: {
+    flex: 1,
+    minWidth: '45%',
+    paddingVertical: 10,
+    paddingHorizontal: 12,
+    borderWidth: 2,
+    borderColor: '#ddd',
+    borderRadius: 8,
+    alignItems: 'center',
+    backgroundColor: '#fff',
+  },
+  typeButtonActive: {
+    borderColor: '#1e40af',
+    backgroundColor: '#e0e7ff',
+  },
+  typeButtonText: {
+    color: '#666',
+    fontSize: 12,
+    fontWeight: 'bold',
+  },
+  typeButtonTextActive: {
+    color: '#1e40af',
+  },
+  protocolContainer: {
+    flexDirection: 'row',
+    gap: 8,
+  },
+  protocolButton: {
+    flex: 1,
+    paddingVertical: 10,
+    paddingHorizontal: 12,
+    borderWidth: 2,
+    borderColor: '#ddd',
+    borderRadius: 8,
+    alignItems: 'center',
+    backgroundColor: '#fff',
+  },
+  protocolButtonActive: {
+    borderColor: '#1e40af',
+    backgroundColor: '#e0e7ff',
+  },
+  protocolButtonText: {
+    color: '#666',
+    fontSize: 12,
+    fontWeight: 'bold',
+  },
+  protocolButtonTextActive: {
+    color: '#1e40af',
+  },
+  modalFooter: {
+    paddingHorizontal: 16,
+    paddingVertical: 16,
+    borderTopWidth: 1,
+    borderTopColor: '#eee',
+    backgroundColor: '#fff',
+  },
+  modalCreateButton: {
+    backgroundColor: '#1e40af',
+    paddingVertical: 12,
+    borderRadius: 8,
+    alignItems: 'center',
+  },
+  modalCreateButtonDisabled: {
+    opacity: 0.6,
+  },
+  modalCreateButtonText: {
+    color: '#fff',
+    fontWeight: 'bold',
+    fontSize: 16,
   },
 });

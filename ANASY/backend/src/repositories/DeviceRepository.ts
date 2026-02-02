@@ -23,4 +23,12 @@ export class DeviceRepository {
     );
     return result.rows[0];
   }
+
+  public async updateStatus(id: string, status: any): Promise<Device | undefined> {
+    const result = await pool.query(
+      'UPDATE devices SET status = $1, last_seen = NOW() WHERE id = $2 RETURNING *',
+      [status, id]
+    );
+    return result.rows[0];
+  }
 }

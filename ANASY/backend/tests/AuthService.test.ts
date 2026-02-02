@@ -19,7 +19,8 @@ describe('AuthService', () => {
   it('should login with correct credentials', async () => {
     const result = await service.login(email, password);
     expect(result.user.email).toBe(email);
-    expect(result.token).toBeDefined();
+    expect(result.accessToken).toBeDefined();
+    expect(result.refreshToken).toBeDefined();
   });
 
   it('should not login with wrong password', async () => {

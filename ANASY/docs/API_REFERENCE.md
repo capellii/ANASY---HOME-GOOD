@@ -30,6 +30,11 @@
 - Body: Device object (without id)
 - Response: Device object
 
+### PATCH /api/devices/:id/status
+- Updates device status
+- Body: { status }
+- Response: Device object
+
 ---
 
 ## Scenario Endpoints
@@ -87,4 +92,4 @@
 
 ## Status
 - All endpoints return JSON
-- Auth required for protected endpoints (to be implemented)
+- Auth required for protected endpoints

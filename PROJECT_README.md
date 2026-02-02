@@ -14,8 +14,8 @@ Plataforma inteligente para automação residencial com IA, integração de disp
 
 ### 📱 Mobile - EM DESENVOLVIMENTO
 - React Native + Expo
-- Login/Logout básico
-- Precisa de: AuthContext, AsyncStorage, integração completa
+- Login/Logout + sessão persistida (AuthContext + AsyncStorage)
+- Precisa de: refresh token automático e controle de dispositivos
 
 ## 🚀 Quick Start
 
@@ -91,7 +91,7 @@ Senha: 123456
 ### Mobile
 - **Framework**: React Native 0.73
 - **Build**: Expo 50
-- **State**: AuthContext (em desenvolvimento)
+- **State**: AuthContext + AsyncStorage (pronto)
 - **HTTP**: Axios
 - **Navigation**: React Navigation (Stack)
 
@@ -171,8 +171,8 @@ POST http://localhost:3000/api/auth/login
 
 ## 🐛 Problemas Conhecidos
 
-1. **Mobile**: AuthContext não persiste tokens
-2. **Mobile**: Sem autenticação nos endpoints
+1. **Mobile**: Refresh token automático ainda não implementado
+2. **Mobile**: Controle de dispositivos pendente
 3. **Backend**: CORS não configurado (localhost apenas)
 4. **Backend**: Validação de payload faltando
 

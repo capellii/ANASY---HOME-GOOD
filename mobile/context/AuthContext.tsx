@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useReducer } from 'react';
+import React, { createContext, useCallback, useContext, useEffect, useReducer } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import api from '../services/api';
 
@@ -76,7 +76,39 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     user: null,
   });
 
+  const setAccessToken = async (accessToken: string | null) => {
+    if (accessToken) {
+      await AsyncStorage.setItem('accessToken', accessToken);
+      api.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
+    } else {
+      await AsyncStorage.removeItem('accessToken');
+      delete api.defaults.headers.common['Authorization'];
+    }
+  };
+
+  const refreshAccessToken = async (): Promise<string | null> => {
+    const refreshToken = await AsyncStorage.getItem('refreshToken');
+    if (!refreshToken) return null;
+    const response = await api.post('/auth/refresh', { refreshToken });
+    const { accessToken } = response.data;
+    await setAccessToken(accessToken);
+    return accessToken;
+  };
+
   // Bootstrap - restore session on app start
+  const signOut = useCallback(async () => {
+    try {
+      await AsyncStorage.removeItem('accessToken');
+      await AsyncStorage.removeItem('refreshToken');
+      await AsyncStorage.removeItem('user');
+      delete api.defaults.headers.common['Authorization'];
+      dispatch({ type: 'SIGN_OUT' });
+    } catch (error) {
+      console.error('Sign out failed:', error);
+      throw error;
+    }
+  }, []);
+
   useEffect(() => {
     const bootstrapAsync = async () => {
       try {
@@ -85,8 +117,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
         if (accessToken && userJson) {
           const user = JSON.parse(userJson);
-          // Set token in API headers
-          api.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
+          await setAccessToken(accessToken);
           dispatch({
             type: 'RESTORE_TOKEN',
             payload: { user, accessToken },
@@ -109,6 +140,51 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     bootstrapAsync();
   }, []);
 
+  useEffect(() => {
+    const requestInterceptor = api.interceptors.request.use(async (config) => {
+      const accessToken = await AsyncStorage.getItem('accessToken');
+      if (accessToken) {
+        config.headers = config.headers || {};
+        config.headers.Authorization = `Bearer ${accessToken}`;
+      }
+      return config;
+    });
+
+    const responseInterceptor = api.interceptors.response.use(
+      (response) => response,
+      async (error) => {
+        const originalRequest = error.config || {};
+        if (originalRequest.url?.includes('/auth/refresh')) {
+          return Promise.reject(error);
+        }
+
+        if (error.response?.status === 401 && !originalRequest._retry) {
+          originalRequest._retry = true;
+          try {
+            const newAccessToken = await refreshAccessToken();
+            if (!newAccessToken) {
+              await signOut();
+              return Promise.reject(error);
+            }
+            originalRequest.headers = originalRequest.headers || {};
+            originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
+            return api(originalRequest);
+          } catch (refreshError) {
+            await signOut();
+            return Promise.reject(refreshError);
+          }
+        }
+
+        return Promise.reject(error);
+      }
+    );
+
+    return () => {
+      api.interceptors.request.eject(requestInterceptor);
+      api.interceptors.response.eject(responseInterceptor);
+    };
+  }, [signOut]);
+
   // Sign In
   const signIn = async (email: string, password: string) => {
     try {
@@ -116,12 +192,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const { user, accessToken, refreshToken } = response.data;
 
       // Save tokens
-      await AsyncStorage.setItem('accessToken', accessToken);
+      await setAccessToken(accessToken);
       await AsyncStorage.setItem('refreshToken', refreshToken);
       await AsyncStorage.setItem('user', JSON.stringify(user));
-
-      // Set API header
-      api.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
 
       dispatch({
         type: 'SIGN_IN',
@@ -140,12 +213,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const { user, accessToken, refreshToken } = response.data;
 
       // Save tokens
-      await AsyncStorage.setItem('accessToken', accessToken);
+      await setAccessToken(accessToken);
       await AsyncStorage.setItem('refreshToken', refreshToken);
       await AsyncStorage.setItem('user', JSON.stringify(user));
-
-      // Set API header
-      api.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
 
       dispatch({
         type: 'SIGN_UP',
@@ -158,22 +228,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   // Sign Out
-  const signOut = async () => {
-    try {
-      await AsyncStorage.removeItem('accessToken');
-      await AsyncStorage.removeItem('refreshToken');
-      await AsyncStorage.removeItem('user');
-
-      // Remove API header
-      delete api.defaults.headers.common['Authorization'];
-
-      dispatch({ type: 'SIGN_OUT' });
-    } catch (error) {
-      console.error('Sign out failed:', error);
-      throw error;
-    }
-  };
-
   const value: AuthContextType = {
     state,
     signIn,

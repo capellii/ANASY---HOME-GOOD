@@ -15,4 +15,8 @@ export class DeviceService {
   public async createDevice(deviceData: Omit<Device, 'id'>): Promise<Device> {
     return this.deviceRepository.create(deviceData);
   }
+
+  public async updateDeviceStatus(id: string, status: any): Promise<Device | undefined> {
+    return this.deviceRepository.updateStatus(id, status);
+  }
 }

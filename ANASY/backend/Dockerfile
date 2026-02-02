@@ -6,8 +6,8 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm install --legacy-peer-deps
 
-COPY dist ./dist
-COPY .env ./.env
+COPY . .
+RUN npm run build
 
 EXPOSE 3000
 

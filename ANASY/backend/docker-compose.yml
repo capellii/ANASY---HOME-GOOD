@@ -28,7 +28,7 @@ services:
       - '3000:3000'
     volumes:
       - .:/app
-    command: sh -c "npm run initdb && node dist/app.js"
+    command: sh -c "npm install --legacy-peer-deps && npm run build && npm run initdb && node dist/app.js"
 
 volumes:
   db_data:
