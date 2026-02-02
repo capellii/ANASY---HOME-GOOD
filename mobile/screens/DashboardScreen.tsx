@@ -203,7 +203,7 @@ export default function DashboardScreen() {
                     styles.typeButton,
                     newDevice.type === type && styles.typeButtonActive,
                   ]}
-                  onPress={() => setNewDevice((prev) => ({ ...prev, type }))}
+                  onPress={() => setNewDevice((prev) => ({ ...prev, type: type as any }))}
                   disabled={createLoading}
                 >
                   <Text
@@ -227,7 +227,7 @@ export default function DashboardScreen() {
                     styles.protocolButton,
                     newDevice.protocol === protocol && styles.protocolButtonActive,
                   ]}
-                  onPress={() => setNewDevice((prev) => ({ ...prev, protocol }))}
+                  onPress={() => setNewDevice((prev) => ({ ...prev, protocol: protocol as any }))}
                   disabled={createLoading}
                 >
                   <Text

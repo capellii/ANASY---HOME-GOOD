@@ -141,11 +141,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, []);
 
   useEffect(() => {
-    const requestInterceptor = api.interceptors.request.use(async (config) => {
+    const requestInterceptor = api.interceptors.request.use(async (config: any) => {
       const accessToken = await AsyncStorage.getItem('accessToken');
       if (accessToken) {
-        config.headers = config.headers || {};
-        config.headers.Authorization = `Bearer ${accessToken}`;
+        if (!config.headers) {
+          config.headers = {};
+        }
+        config.headers['Authorization'] = `Bearer ${accessToken}`;
       }
       return config;
     });
