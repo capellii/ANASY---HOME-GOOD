@@ -9,13 +9,17 @@ export class DeviceRepository {
   }
 
   public async create(deviceData: Omit<Device, 'id'>): Promise<Device> {
+    const statusJson = typeof deviceData.status === 'string' 
+      ? JSON.stringify({ state: deviceData.status })
+      : JSON.stringify(deviceData.status || {});
+      
     const result = await pool.query(
-      'INSERT INTO devices (name, type, protocol, status, energy_consumption, last_seen, battery_level) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *',
+      'INSERT INTO devices (name, type, protocol, status, energy_consumption, last_seen, battery_level) VALUES ($1, $2, $3, $4::jsonb, $5, $6, $7) RETURNING *',
       [
         deviceData.name,
         deviceData.type,
-        deviceData.protocol,
-        deviceData.status,
+        deviceData.protocol || 'unknown',
+        statusJson,
         deviceData.energyConsumption ?? null,
         deviceData.lastSeen ?? null,
         deviceData.batteryLevel ?? null
@@ -25,9 +29,13 @@ export class DeviceRepository {
   }
 
   public async updateStatus(id: string, status: any): Promise<Device | undefined> {
+    const statusJson = typeof status === 'string' 
+      ? JSON.stringify({ state: status })
+      : JSON.stringify(status);
+      
     const result = await pool.query(
-      'UPDATE devices SET status = $1, last_seen = NOW() WHERE id = $2 RETURNING *',
-      [status, id]
+      'UPDATE devices SET status = $1::jsonb, last_seen = NOW() WHERE id = $2 RETURNING *',
+      [statusJson, id]
     );
     return result.rows[0];
   }

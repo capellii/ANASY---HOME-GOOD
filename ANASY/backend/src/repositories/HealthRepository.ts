@@ -9,8 +9,8 @@ export class HealthRepository {
 
   public async create(metricData: Omit<HealthMetric, 'id'>): Promise<HealthMetric> {
     const result = await pool.query(
-      'INSERT INTO health_metrics (user_id, metric_type, value, timestamp, device_id) VALUES ($1, $2, $3, $4, $5) RETURNING *',
-      [metricData.user_id, metricData.metric_type, metricData.value, metricData.timestamp, metricData.device_id]
+      'INSERT INTO health_metrics (user_id, metric_type, value, device_id) VALUES ($1, $2, $3, $4) RETURNING *',
+      [metricData.user_id, metricData.metric_type, metricData.value, metricData.device_id || null]
     );
     return result.rows[0];
   }

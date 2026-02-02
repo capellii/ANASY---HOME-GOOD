@@ -54,3 +54,13 @@ CREATE TABLE IF NOT EXISTS events (
   data JSONB,
   created_at TIMESTAMP NOT NULL DEFAULT NOW()
 );
+
+CREATE TABLE IF NOT EXISTS security_events (
+  id SERIAL PRIMARY KEY,
+  user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  event_type VARCHAR(100) NOT NULL,
+  severity VARCHAR(20) NOT NULL,
+  description TEXT NOT NULL,
+  device_id INTEGER REFERENCES devices(id) ON DELETE SET NULL,
+  created_at TIMESTAMP NOT NULL DEFAULT NOW()
+);

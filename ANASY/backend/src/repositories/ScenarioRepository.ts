@@ -14,10 +14,10 @@ export class ScenarioRepository {
       [
         scenarioData.name,
         scenarioData.description ?? null,
-        scenarioData.trigger,
+        scenarioData.trigger ?? '{}',
         scenarioData.conditions ?? null,
-        scenarioData.actions,
-        scenarioData.enabled
+        scenarioData.actions ?? '{}',
+        scenarioData.enabled ?? true
       ]
     );
     return result.rows[0];

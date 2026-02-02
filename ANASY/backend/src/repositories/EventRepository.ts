@@ -7,10 +7,10 @@ export class EventRepository {
     return result.rows;
   }
 
-  public async create(eventData: Omit<EventLog, 'id'>): Promise<EventLog> {
+  public async create(eventData: Omit<EventLog, 'id' | 'created_at'>): Promise<EventLog> {
     const result = await pool.query(
-      'INSERT INTO events (user_id, event_type, device_id, data, created_at) VALUES ($1, $2, $3, $4, $5) RETURNING *',
-      [eventData.user_id, eventData.event_type, eventData.device_id, eventData.data, eventData.created_at]
+      'INSERT INTO events (user_id, event_type, device_id, data) VALUES ($1, $2, $3, $4) RETURNING *',
+      [eventData.user_id, eventData.event_type, eventData.device_id || null, eventData.data || null]
     );
     return result.rows[0];
   }

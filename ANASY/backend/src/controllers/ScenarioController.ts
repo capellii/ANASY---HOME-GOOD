@@ -6,8 +6,20 @@ export class ScenarioController {
 
   constructor() {
     this.scenarioService = new ScenarioService();
+    this.getAll = this.getAll.bind(this);
     this.getScenarios = this.getScenarios.bind(this);
+    this.create = this.create.bind(this);
     this.createScenario = this.createScenario.bind(this);
+  }
+
+  // Alias for backwards compatibility
+  public async getAll(req: Request, res: Response) {
+    return this.getScenarios(req, res);
+  }
+
+  // Alias for backwards compatibility
+  public async create(req: Request, res: Response) {
+    return this.createScenario(req, res);
   }
 
   public async getScenarios(req: Request, res: Response) {

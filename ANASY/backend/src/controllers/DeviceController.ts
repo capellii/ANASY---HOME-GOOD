@@ -6,9 +6,21 @@ export class DeviceController {
 
   constructor() {
     this.deviceService = new DeviceService();
+    this.getAll = this.getAll.bind(this);
     this.getDevices = this.getDevices.bind(this);
+    this.create = this.create.bind(this);
     this.createDevice = this.createDevice.bind(this);
     this.updateDeviceStatus = this.updateDeviceStatus.bind(this);
+  }
+
+  // Alias for backwards compatibility
+  public async getAll(req: Request, res: Response) {
+    return this.getDevices(req, res);
+  }
+
+  // Alias for backwards compatibility
+  public async create(req: Request, res: Response) {
+    return this.createDevice(req, res);
   }
 
   public async getDevices(req: Request, res: Response) {
@@ -23,7 +35,9 @@ export class DeviceController {
   public async createDevice(req: Request, res: Response) {
     try {
       const device = await this.deviceService.createDevice(req.body);
-      res.status(201).json(device);
+      // Convert id to string for consistent JSON response
+      const response = { ...device, id: device.id.toString() };
+      res.status(201).json(response);
     } catch (err: any) {
       res.status(400).json({ error: err.message });
     }
