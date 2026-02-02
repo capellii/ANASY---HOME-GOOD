@@ -8,6 +8,7 @@ export class AuthController {
     this.authService = new AuthService();
     this.login = this.login.bind(this);
     this.register = this.register.bind(this);
+    this.refreshToken = this.refreshToken.bind(this);
   }
 
   public async refreshToken(req: Request, res: Response) {
