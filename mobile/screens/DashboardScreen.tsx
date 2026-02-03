@@ -11,6 +11,7 @@ import {
   Modal,
   TextInput,
   ScrollView,
+  Platform,
 } from 'react-native';
 import { useAuth } from '../context/AuthContext';
 import api from '../services/api';
@@ -136,36 +137,40 @@ export default function DashboardScreen() {
 
   return (
     <View style={styles.container}>
-      <View style={styles.topBar}>
-        <Text style={styles.welcome}>Welcome, {user?.name || 'User'}!</Text>
-        <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
-          <Text style={styles.logoutText}>Logout</Text>
-        </TouchableOpacity>
-      </View>
+      <ScrollView contentContainerStyle={styles.scrollContent}>
+        <View style={styles.content}>
+          <View style={styles.topBar}>
+            <Text style={styles.welcome}>Welcome, {user?.name || 'User'}!</Text>
+            <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
+              <Text style={styles.logoutText}>Logout</Text>
+            </TouchableOpacity>
+          </View>
 
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Dispositivos</Text>
-        {loading ? (
-          <ActivityIndicator size="large" color="#1e40af" style={styles.loader} />
-        ) : devices.length === 0 ? (
-          <Text style={styles.emptyText}>Nenhum dispositivo registrado.</Text>
-        ) : (
-          <FlatList
-            data={devices}
-            renderItem={renderDevice}
-            keyExtractor={(item) => String(item.id)}
-            scrollEnabled={false}
-          />
-        )}
-      </View>
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Dispositivos</Text>
+            {loading ? (
+              <ActivityIndicator size="large" color="#1e40af" style={styles.loader} />
+            ) : devices.length === 0 ? (
+              <Text style={styles.emptyText}>Nenhum dispositivo registrado.</Text>
+            ) : (
+              <FlatList
+                data={devices}
+                renderItem={renderDevice}
+                keyExtractor={(item) => String(item.id)}
+                scrollEnabled={false}
+              />
+            )}
+          </View>
 
-      <TouchableOpacity style={styles.createButton} onPress={() => setShowCreateModal(true)}>
-        <Text style={styles.createButtonText}>+ Novo Dispositivo</Text>
-      </TouchableOpacity>
+          <TouchableOpacity style={styles.createButton} onPress={() => setShowCreateModal(true)}>
+            <Text style={styles.createButtonText}>+ Novo Dispositivo</Text>
+          </TouchableOpacity>
 
-      <TouchableOpacity style={styles.refreshButton} onPress={loadDevices}>
-        <Text style={styles.refreshText}>Atualizar</Text>
-      </TouchableOpacity>
+          <TouchableOpacity style={styles.refreshButton} onPress={loadDevices}>
+            <Text style={styles.refreshText}>Atualizar</Text>
+          </TouchableOpacity>
+        </View>
+      </ScrollView>
 
       <Modal
         visible={showCreateModal}
@@ -263,6 +268,15 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#f5f5f5',
+  },
+  content: {
+    width: '100%',
+    maxWidth: 960,
+    alignSelf: 'center',
+    ...(Platform.OS === 'web' ? { paddingHorizontal: 16 } : null),
+  },
+  scrollContent: {
+    paddingBottom: 24,
   },
   topBar: {
     flexDirection: 'row',

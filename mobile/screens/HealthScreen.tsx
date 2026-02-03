@@ -6,6 +6,8 @@ import {
   FlatList,
   ActivityIndicator,
   Alert,
+  Platform,
+  ScrollView,
 } from 'react-native';
 import api from '../services/api';
 import { useAuth } from '../context/AuthContext';
@@ -21,17 +23,19 @@ export default function HealthScreen() {
   const [metrics, setMetrics] = useState<HealthMetric[]>([]);
   const [loading, setLoading] = useState(true);
   const { state } = useAuth();
+  const userId = state.user?.id;
 
   useEffect(() => {
-    loadHealthMetrics();
-  }, []);
+    if (!userId) {
+      setLoading(false);
+      return;
+    }
+    loadHealthMetrics(userId);
+  }, [userId]);
 
-  const loadHealthMetrics = async () => {
+  const loadHealthMetrics = async (id: string | number) => {
     try {
-      const userId = state.user?.id;
-      if (!userId) return;
-
-      const response = await api.get(`/health/user/${userId}`);
+      const response = await api.get(`/health/user/${id}`);
       setMetrics(response.data);
     } catch (error: any) {
       Alert.alert('Error', 'Failed to load health metrics');
@@ -87,27 +91,29 @@ export default function HealthScreen() {
 
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.title}>Health Metrics</Text>
-      </View>
+      <ScrollView style={styles.content} contentContainerStyle={styles.scrollContent}>
+        <View style={styles.header}>
+          <Text style={styles.title}>Health Metrics</Text>
+        </View>
 
-      <View style={styles.summaryCard}>
-        <Text style={styles.summaryLabel}>Average Value</Text>
-        <Text style={styles.summaryValue}>{averageValue}</Text>
-        <Text style={styles.summarySubtext}>{metrics.length} readings</Text>
-      </View>
+        <View style={styles.summaryCard}>
+          <Text style={styles.summaryLabel}>Average Value</Text>
+          <Text style={styles.summaryValue}>{averageValue}</Text>
+          <Text style={styles.summarySubtext}>{metrics.length} readings</Text>
+        </View>
 
-      <Text style={styles.sectionTitle}>Recent Metrics</Text>
+        <Text style={styles.sectionTitle}>Recent Metrics</Text>
 
-      <FlatList
-        data={metrics}
-        renderItem={renderMetric}
-        keyExtractor={(item) => item.id.toString()}
-        contentContainerStyle={styles.list}
-        ListEmptyComponent={
+        {metrics.length === 0 ? (
           <Text style={styles.emptyText}>No health metrics recorded yet.</Text>
-        }
-      />
+        ) : (
+          metrics.map((item) => (
+            <View key={item.id.toString()}>
+              {renderMetric({ item })}
+            </View>
+          ))
+        )}
+      </ScrollView>
     </View>
   );
 }
@@ -116,6 +122,16 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#F5F5F5',
+  },
+  content: {
+    flex: 1,
+    width: '100%',
+    maxWidth: 960,
+    alignSelf: 'center',
+    ...(Platform.OS === 'web' ? { paddingHorizontal: 16 } : null),
+  },
+  scrollContent: {
+    paddingBottom: 24,
   },
   centered: {
     flex: 1,

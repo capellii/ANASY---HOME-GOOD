@@ -5,7 +5,8 @@ import {
   StyleSheet,
   FlatList,
   ActivityIndicator,
-  Dimensions,
+  Platform,
+  ScrollView,
 } from 'react-native';
 import api from '../services/api';
 
@@ -75,27 +76,29 @@ export default function EnergyScreen() {
 
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.title}>Energy Monitor</Text>
-      </View>
+      <ScrollView style={styles.content} contentContainerStyle={styles.scrollContent}>
+        <View style={styles.header}>
+          <Text style={styles.title}>Energy Monitor</Text>
+        </View>
 
-      <View style={styles.summaryCard}>
-        <Text style={styles.summaryLabel}>Total Consumption</Text>
-        <Text style={styles.summaryValue}>{totalConsumption.toFixed(2)} kWh</Text>
-        <Text style={styles.summarySubtext}>{energyData.length} records</Text>
-      </View>
+        <View style={styles.summaryCard}>
+          <Text style={styles.summaryLabel}>Total Consumption</Text>
+          <Text style={styles.summaryValue}>{totalConsumption.toFixed(2)} kWh</Text>
+          <Text style={styles.summarySubtext}>{energyData.length} records</Text>
+        </View>
 
-      <Text style={styles.sectionTitle}>Recent Activity</Text>
-      
-      <FlatList
-        data={energyData}
-        renderItem={renderEnergyRecord}
-        keyExtractor={(item, index) => `${item.id}-${index}`}
-        contentContainerStyle={styles.list}
-        ListEmptyComponent={
+        <Text style={styles.sectionTitle}>Recent Activity</Text>
+        
+        {energyData.length === 0 ? (
           <Text style={styles.emptyText}>No energy data available yet.</Text>
-        }
-      />
+        ) : (
+          energyData.map((item, index) => (
+            <View key={`${item.id}-${index}`}>
+              {renderEnergyRecord({ item })}
+            </View>
+          ))
+        )}
+      </ScrollView>
     </View>
   );
 }
@@ -104,6 +107,16 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#F5F5F5',
+  },
+  content: {
+    flex: 1,
+    width: '100%',
+    maxWidth: 960,
+    alignSelf: 'center',
+    ...(Platform.OS === 'web' ? { paddingHorizontal: 16 } : null),
+  },
+  scrollContent: {
+    paddingBottom: 24,
   },
   centered: {
     flex: 1,

@@ -9,14 +9,20 @@ export class ScenarioRepository {
   }
 
   public async create(scenarioData: Omit<Scenario, 'id'>): Promise<Scenario> {
+    const toJson = (value: unknown, fallback: string | null) => {
+      if (value === undefined || value === null) return fallback;
+      if (typeof value === 'string') return value;
+      return JSON.stringify(value);
+    };
+
     const result = await pool.query(
       'INSERT INTO scenarios (name, description, trigger, conditions, actions, enabled) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *',
       [
         scenarioData.name,
         scenarioData.description ?? null,
-        scenarioData.trigger ?? '{}',
-        scenarioData.conditions ?? null,
-        scenarioData.actions ?? '{}',
+        toJson(scenarioData.trigger, '{}'),
+        toJson(scenarioData.conditions, null),
+        toJson(scenarioData.actions, '{}'),
         scenarioData.enabled ?? true
       ]
     );

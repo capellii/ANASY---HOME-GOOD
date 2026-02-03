@@ -6,6 +6,8 @@ import {
   FlatList,
   ActivityIndicator,
   Alert,
+  Platform,
+  ScrollView,
 } from 'react-native';
 import api from '../services/api';
 import { useAuth } from '../context/AuthContext';
@@ -22,17 +24,19 @@ export default function SecurityScreen() {
   const [events, setEvents] = useState<SecurityEvent[]>([]);
   const [loading, setLoading] = useState(true);
   const { state } = useAuth();
+  const userId = state.user?.id;
 
   useEffect(() => {
-    loadSecurityEvents();
-  }, []);
+    if (!userId) {
+      setLoading(false);
+      return;
+    }
+    loadSecurityEvents(userId);
+  }, [userId]);
 
-  const loadSecurityEvents = async () => {
+  const loadSecurityEvents = async (id: string | number) => {
     try {
-      const userId = state.user?.id;
-      if (!userId) return;
-
-      const response = await api.get(`/security/user/${userId}`);
+      const response = await api.get(`/security/user/${id}`);
       setEvents(response.data);
     } catch (error: any) {
       Alert.alert('Error', 'Failed to load security events');
@@ -84,32 +88,34 @@ export default function SecurityScreen() {
 
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.title}>Security Events</Text>
-      </View>
-
-      <View style={styles.statsContainer}>
-        <View style={styles.statCard}>
-          <Text style={styles.statValue}>{events.length}</Text>
-          <Text style={styles.statLabel}>Total Events</Text>
+      <ScrollView style={styles.content} contentContainerStyle={styles.scrollContent}>
+        <View style={styles.header}>
+          <Text style={styles.title}>Security Events</Text>
         </View>
-        <View style={styles.statCard}>
-          <Text style={[styles.statValue, { color: '#F44336' }]}>
-            {events.filter((e) => e.severity === 'critical' || e.severity === 'high').length}
-          </Text>
-          <Text style={styles.statLabel}>High Priority</Text>
-        </View>
-      </View>
 
-      <FlatList
-        data={events}
-        renderItem={renderEvent}
-        keyExtractor={(item) => item.id.toString()}
-        contentContainerStyle={styles.list}
-        ListEmptyComponent={
+        <View style={styles.statsContainer}>
+          <View style={styles.statCard}>
+            <Text style={styles.statValue}>{events.length}</Text>
+            <Text style={styles.statLabel}>Total Events</Text>
+          </View>
+          <View style={styles.statCard}>
+            <Text style={[styles.statValue, { color: '#F44336' }]}>
+              {events.filter((e) => e.severity === 'critical' || e.severity === 'high').length}
+            </Text>
+            <Text style={styles.statLabel}>High Priority</Text>
+          </View>
+        </View>
+
+        {events.length === 0 ? (
           <Text style={styles.emptyText}>No security events. All systems secure!</Text>
-        }
-      />
+        ) : (
+          events.map((item) => (
+            <View key={item.id.toString()}>
+              {renderEvent({ item })}
+            </View>
+          ))
+        )}
+      </ScrollView>
     </View>
   );
 }
@@ -118,6 +124,16 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#F5F5F5',
+  },
+  content: {
+    flex: 1,
+    width: '100%',
+    maxWidth: 960,
+    alignSelf: 'center',
+    ...(Platform.OS === 'web' ? { paddingHorizontal: 16 } : null),
+  },
+  scrollContent: {
+    paddingBottom: 24,
   },
   centered: {
     flex: 1,

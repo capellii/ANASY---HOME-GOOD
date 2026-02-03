@@ -2,14 +2,18 @@ import { AuthService } from '../src/services/AuthService';
 
 describe('AuthService', () => {
   const service = new AuthService();
-  const email = 'test@anasy.com';
+  const email = `test_${Date.now()}@anasy.com`;
   const password = '123456';
   const name = 'Test User';
+  let registeredUser: { email: string; name: string } | null = null;
+
+  beforeAll(async () => {
+    registeredUser = await service.register(email, password, name);
+  });
 
   it('should register a new user', async () => {
-    const user = await service.register(email, password, name);
-    expect(user.email).toBe(email);
-    expect(user.name).toBe(name);
+    expect(registeredUser?.email).toBe(email);
+    expect(registeredUser?.name).toBe(name);
   });
 
   it('should not register duplicate email', async () => {

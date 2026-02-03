@@ -26,9 +26,11 @@ const corsOptions = {
       'exp://localhost:19000', // Expo Native
       'exp://192.168.1.1:19000', // Replace with your local IP
     ];
-    
+
+    const isLocalhost = origin?.startsWith('http://localhost:') || origin?.startsWith('http://127.0.0.1:');
+
     // Allow requests with no origin (mobile apps, Postman, etc.)
-    if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+    if (!origin || isLocalhost || allowedOrigins.indexOf(origin) !== -1) {
       callback(null, true);
     } else {
       callback(new Error('Not allowed by CORS'));

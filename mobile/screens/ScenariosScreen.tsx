@@ -9,6 +9,8 @@ import {
   Modal,
   TextInput,
   Alert,
+  Platform,
+  ScrollView,
 } from 'react-native';
 import api from '../services/api';
 
@@ -92,25 +94,27 @@ export default function ScenariosScreen() {
 
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.title}>Automation Scenarios</Text>
-        <TouchableOpacity
-          style={styles.addButton}
-          onPress={() => setModalVisible(true)}
-        >
-          <Text style={styles.addButtonText}>+ New</Text>
-        </TouchableOpacity>
-      </View>
+      <ScrollView style={styles.content} contentContainerStyle={styles.scrollContent}>
+        <View style={styles.header}>
+          <Text style={styles.title}>Automation Scenarios</Text>
+          <TouchableOpacity
+            style={styles.addButton}
+            onPress={() => setModalVisible(true)}
+          >
+            <Text style={styles.addButtonText}>+ New</Text>
+          </TouchableOpacity>
+        </View>
 
-      <FlatList
-        data={scenarios}
-        renderItem={renderScenario}
-        keyExtractor={(item) => item.id.toString()}
-        contentContainerStyle={styles.list}
-        ListEmptyComponent={
+        {scenarios.length === 0 ? (
           <Text style={styles.emptyText}>No scenarios yet. Create your first one!</Text>
-        }
-      />
+        ) : (
+          scenarios.map((item) => (
+            <View key={item.id}>
+              {renderScenario({ item })}
+            </View>
+          ))
+        )}
+      </ScrollView>
 
       <Modal
         animationType="slide"
@@ -163,6 +167,16 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#F5F5F5',
+  },
+  content: {
+    flex: 1,
+    width: '100%',
+    maxWidth: 960,
+    alignSelf: 'center',
+    ...(Platform.OS === 'web' ? { paddingHorizontal: 16 } : null),
+  },
+  scrollContent: {
+    paddingBottom: 24,
   },
   centered: {
     flex: 1,
