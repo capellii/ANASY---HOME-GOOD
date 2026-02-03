@@ -190,8 +190,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   // Sign In
   const signIn = async (email: string, password: string) => {
     try {
+      console.log('🔐 Attempting login for:', email);
+      console.log('📡 API Base URL:', api.defaults.baseURL);
       const response = await api.post('/auth/login', { email, password });
       const { user, accessToken, refreshToken } = response.data;
+
+      console.log('✅ Login successful for:', user.email);
 
       // Save tokens
       await setAccessToken(accessToken);
@@ -202,8 +206,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         type: 'SIGN_IN',
         payload: { user, accessToken },
       });
-    } catch (error) {
-      console.error('Sign in failed:', error);
+    } catch (error: any) {
+      console.error('❌ Sign in failed:', error);
+      console.error('❌ Error message:', error.message);
+      console.error('❌ Error response:', error.response?.data);
       throw error;
     }
   };

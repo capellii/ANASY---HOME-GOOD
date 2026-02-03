@@ -3,7 +3,7 @@
     "name": "anasy-mobile",
     "slug": "anasy-mobile",
     "version": "1.0.0",
-    "sdkVersion": "49.0.0",
+    "sdkVersion": "54.0.0",
     "platforms": ["ios", "android", "web"],
     "orientation": "portrait",
     "icon": "./assets/icon.png",
