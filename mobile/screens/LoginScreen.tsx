@@ -5,7 +5,7 @@ import { useAuth } from '../context/AuthContext';
 export default function LoginScreen() {
   const { signIn } = useAuth();
   const [email, setEmail] = useState('joao@teste.com');
-  const [password, setPassword] = useState('123456');
+  const [password, setPassword] = useState('senha123');
   const [loading, setLoading] = useState(false);
 
   const handleLogin = async () => {
@@ -60,7 +60,7 @@ export default function LoginScreen() {
           )}
         </TouchableOpacity>
 
-        <Text style={styles.testText}>Demo: joao@teste.com / 123456</Text>
+        <Text style={styles.testText}>Demo: joao@teste.com / senha123</Text>
       </View>
     </View>
   );
